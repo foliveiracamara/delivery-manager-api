@@ -1,0 +1,123 @@
+### Delivery Manager API - Test Requests
+
+# Base URL
+@baseUrl = http://localhost:5000
+
+### Health Check
+GET {{baseUrl}}/health
+Content-Type: application/json
+
+###
+
+### Create Package
+POST {{baseUrl}}/package/
+Content-Type: application/json
+
+{
+  "product": "Smartphone Samsung Galaxy S23",
+  "weight_kg": 0.25,
+  "destination_state": "SP"
+}
+
+###
+
+### Create Package - Another Example
+POST {{baseUrl}}/package
+Content-Type: application/json
+
+{
+  "product": "Notebook Dell Inspiron 15",
+  "weight_kg": 2.5,
+  "destination_state": "RJ"
+}
+
+###
+
+### Create Package - Heavy Item
+POST {{baseUrl}}/package
+Content-Type: application/json
+
+{
+  "product": "Mesa de Escritório",
+  "weight_kg": 15.0,
+  "destination_state": "MG"
+}
+
+###
+
+### Create Package - Northeast Region
+POST {{baseUrl}}/package/
+Content-Type: application/json
+
+{
+  "product": "Livros Acadêmicos",
+  "weight_kg": 3.2,
+  "destination_region": "northeast"
+}
+
+###
+
+### Create Package - Midwest Region
+POST {{baseUrl}}/package/
+Content-Type: application/json
+
+{
+  "product": "Ferramentas Industriais",
+  "weight_kg": 8.7,
+  "destination_region": "GO"
+}
+
+###
+
+### Quote Shipping
+POST {{baseUrl}}/package/8f431e44-c172-4199-b2da-e603334707ed/quote
+Content-Type: application/json
+
+### Get All Packages (when implemented)
+GET {{baseUrl}}/package/
+Content-Type: application/json
+
+###
+
+## Get Package by ID 
+GET {{baseUrl}}/package/d9ba4a57-cd67-474f-aedf-d6f8be9bc616
+Content-Type: application/json
+
+###
+
+### Update Package Status (when implemented)
+# PUT {{baseUrl}}/package/{{packageId}}/status
+# Content-Type: application/json
+
+# {
+#   "status": "enviado"
+# }
+
+###
+
+### Assign Carrier to Package (when implemented)
+# PUT {{baseUrl}}/package/{{packageId}}/carrier
+# Content-Type: application/json
+
+# {
+#   "carrier_id": "nebulix",
+#   "carrier_name": "Nebulix Logística",
+#   "estimated_price": 29.50,
+#   "estimated_days": 4
+# }
+
+###
+
+### Get Shipping Quotes (when implemented)
+POST {{baseUrl}}/shipping/quotes
+Content-Type: application/json
+
+{
+  "weight_kg": 2.5,
+  "destination_state": "SP"
+}
+
+###
+
+### Variables for testing (you can set these after creating packages)
+# @packageId = your-package-id-here 
