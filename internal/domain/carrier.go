@@ -1,5 +1,7 @@
 package domain
 
+import "errors"
+
 // CarrierRegion represents the coverage of a carrier in a region
 type CarrierRegion struct {
 	Region        DestinationRegion `json:"regiao"`
@@ -41,6 +43,12 @@ func (c *Carrier) CalculateShipping(region DestinationRegion, weightKg float64) 
 	}
 
 	price := regionInfo.PricePerKg * weightKg
+
+	// Se o preço for menor que o preço por kg da região, usar o preço por kg da região como valor mínimo
+	if price < regionInfo.PricePerKg {
+		return regionInfo.PricePerKg, regionInfo.EstimatedDays, true
+	}
+
 	return price, regionInfo.EstimatedDays, true
 }
 
@@ -48,6 +56,16 @@ func (c *Carrier) CalculateShipping(region DestinationRegion, weightKg float64) 
 func (c *Carrier) IsAvailableForRegion(region DestinationRegion) bool {
 	_, exists := c.GetRegionInfo(region)
 	return exists
+}
+
+func GetCarrierByID(id string) (*Carrier, error) {
+	for _, carrier := range GetAvailableCarriers() {
+		if carrier.ID == id {
+			return carrier, nil
+		}
+	}
+
+	return nil, errors.New("carrier not found")
 }
 
 // GetAvailableCarriers returns the available carriers in the system

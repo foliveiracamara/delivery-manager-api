@@ -17,18 +17,18 @@ func NewPackage(repository repository.PackageRepository, service *service.Packag
 	return &PackageUseCase{repository: repository, service: service}
 }
 
-func (s PackageUseCase) Create(dto dto.PackageRequest) error {
+func (s PackageUseCase) Create(dto dto.PackageRequest) (id string, err error) {
 	pkg, err := s.service.Create(&domain.Package{
 		Product:           dto.Product,
 		WeightKg:          dto.WeightKg,
 		DestinationRegion: domain.DestinationRegion(dto.DestinationRegion),
 	})
 	if err != nil {
-		return err
+		return "", err
 	}
 	s.repository.Save(pkg)
 
-	return nil
+	return pkg.ID, nil
 }
 
 func (s PackageUseCase) Get(id string) (*domain.Package, error) {
@@ -54,4 +54,20 @@ func (s PackageUseCase) QuoteShipping(id string) ([]vo.Shipping, error) {
 	}
 
 	return s.service.QuoteAvailableShippings(pkg)
+}
+
+func (s PackageUseCase) HireCarrier(id string, carrierID string) error {
+	pkg, err := s.repository.GetByID(id)
+	if err != nil {
+		return err
+	}
+
+	s.service.HireCarrier(pkg, carrierID)
+
+	err = s.repository.Save(pkg)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

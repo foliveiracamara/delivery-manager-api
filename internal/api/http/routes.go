@@ -14,6 +14,7 @@ func (s *Server) setupRoutes(cm *ControllerManager) {
 	packageRouter.GET("/", cm.PackageController.GetAll) //TODO: Delete later
 	packageRouter.POST("/", cm.PackageController.Create)
 	packageRouter.POST("/:id/quote", cm.PackageController.QuoteShippings)
+	packageRouter.POST("/hire-carrier", cm.PackageController.HireCarrier)
 
 	mainRouter.GET("/health", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, map[string]string{

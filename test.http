@@ -16,7 +16,7 @@ Content-Type: application/json
 {
   "product": "Smartphone Samsung Galaxy S23",
   "weight_kg": 0.25,
-  "destination_state": "SP"
+  "destination_region": "southeast"
 }
 
 ###
@@ -64,13 +64,13 @@ Content-Type: application/json
 {
   "product": "Ferramentas Industriais",
   "weight_kg": 8.7,
-  "destination_region": "GO"
+  "destination_region": "midwest"
 }
 
 ###
 
 ### Quote Shipping
-POST {{baseUrl}}/package/8f431e44-c172-4199-b2da-e603334707ed/quote
+POST {{baseUrl}}/package/46b819f5-c731-4d66-a84a-61541de0b70e/quote
 Content-Type: application/json
 
 ### Get All Packages (when implemented)
@@ -80,7 +80,7 @@ Content-Type: application/json
 ###
 
 ## Get Package by ID 
-GET {{baseUrl}}/package/d9ba4a57-cd67-474f-aedf-d6f8be9bc616
+GET {{baseUrl}}/package/b6abad26-6671-4a9e-a7c7-64df90247a26
 Content-Type: application/json
 
 ###
@@ -108,13 +108,13 @@ Content-Type: application/json
 
 ###
 
-### Get Shipping Quotes (when implemented)
-POST {{baseUrl}}/shipping/quotes
+### Hire Carrier
+POST {{baseUrl}}/package/hire-carrier
 Content-Type: application/json
 
 {
-  "weight_kg": 2.5,
-  "destination_state": "SP"
+  "carrier_id": "nebulix",
+  "package_id": "b6abad26-6671-4a9e-a7c7-64df90247a26"
 }
 
 ###

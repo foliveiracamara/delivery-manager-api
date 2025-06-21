@@ -34,3 +34,7 @@ func (s PackageService) QuoteAvailableShippings(pkg *domain.Package) ([]vo.Shipp
 
 	return sortedShippings, nil
 }
+
+func (s PackageService) HireCarrier(pkg *domain.Package, carrierID string) error {
+	return pkg.HireCarrier(carrierID)
+}

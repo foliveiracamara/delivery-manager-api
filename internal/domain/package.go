@@ -71,13 +71,13 @@ func (p *Package) QuoteAvailableShippings() ([]vo.Shipping, error) {
 		if !ok {
 			return nil, errors.New("failed to calculate shipping")
 		}
-			shippings = append(shippings, vo.NewShippingQuote(
-				carrier.Name, 
-				carrier.ID, 
-				price,
-				days,
-			))
-		}
+		shippings = append(shippings, vo.NewShippingQuote(
+			carrier.Name,
+			carrier.ID,
+			price,
+			days,
+		))
+	}
 
 	return shippings, nil
 }
@@ -87,6 +87,40 @@ func (p Package) SortShippingsByDeliveryTime(shippings []vo.Shipping) []vo.Shipp
 		return a.EstimatedDays - b.EstimatedDays
 	})
 	return shippings
+}
+
+func (p *Package) HireCarrier(carrierID string) error {
+	// Verificar se o pacote já tem transportadora
+	// verificar se a transportadora atende a regiao
+	// Se não tiver transportadora, criar uma nova
+
+	if p.Shipping != nil {
+		return errors.New("package already has a carrier")
+	}
+
+	carrier, err := GetCarrierByID(carrierID)
+	if err != nil {
+		return err
+	}
+
+	if !carrier.IsAvailableForRegion(p.DestinationRegion) {
+		return errors.New("carrier does not serve the destination region")
+	}
+
+	price, days, ok := carrier.CalculateShipping(p.DestinationRegion, p.WeightKg)
+	if !ok {
+		return errors.New("failed to calculate shipping")
+	}
+
+	shipping := vo.NewShippingQuote(
+		carrier.Name,
+		carrier.ID,
+		price,
+		days,
+	)
+	p.AssignShipping(shipping)
+
+	return nil
 }
 
 // AssignShipping assigns a shipping to the package

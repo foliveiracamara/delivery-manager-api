@@ -11,6 +11,11 @@ type ShippingsQuoteRequest struct {
 	PackageID string `json:"package_id"`
 }
 
+type HireCarrierRequest struct {
+	PackageID  string `json:"package_id"`
+	CarrierID  string `json:"carrier_id"`
+}
+
 // End Requests
 
 // Responses

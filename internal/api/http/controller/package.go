@@ -27,14 +27,17 @@ func (c *PackageController) Create(ctx echo.Context) error {
 			map[string]string{"error": err.Error()})
 	}
 
-	err := c.us.Create(*dto)
+	id, err := c.us.Create(*dto)
 	if err != nil {
 		return ctx.JSON(http.StatusInternalServerError,
 			map[string]string{"error": err.Error()})
 	}
 
 	return ctx.JSON(http.StatusCreated,
-		map[string]string{"message": "Package created successfully"},
+		map[string]any{
+			"message": "Package created successfully",
+			"id": id,
+		},
 	)
 }
 
@@ -52,6 +55,7 @@ func (c *PackageController) Get(ctx echo.Context) error {
 		"weight_kg":          pkg.WeightKg,
 		"destination_region": pkg.DestinationRegion,
 		"status":             pkg.Status,
+		"shipping":           pkg.Shipping,
 	})
 }
 
@@ -67,9 +71,6 @@ func (c *PackageController) GetAll(ctx echo.Context) error {
 }
 
 func (c *PackageController) QuoteShippings(ctx echo.Context) error {
-	//Pegar id do pacote
-	//Chamar usecase de cotação de frete
-	//Retornar as cotações de frete, ordenadas por entrega mais rápida.
 	req := &dto.ShippingsQuoteRequest{}
 	req.PackageID = ctx.Param("id")
 
@@ -94,5 +95,24 @@ func (c *PackageController) QuoteShippings(ctx echo.Context) error {
 
 	return ctx.JSON(http.StatusOK, res)
 }
+
+func (c *PackageController) HireCarrier(ctx echo.Context) error {
+	req := &dto.HireCarrierRequest{}
+	if err := ctx.Bind(req); err != nil {
+		return ctx.JSON(http.StatusBadRequest,
+			map[string]string{"error": "Invalid request body"})
+	}
+
+	err := c.us.HireCarrier(req.PackageID, req.CarrierID)
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError,
+			map[string]string{"error": err.Error()})
+	}
+
+	return ctx.JSON(http.StatusOK, map[string]string{
+		"message": "Carrier hired successfully",
+	})
+}
+
 
 // func (c *PackageController) UpdateStatus(ctx echo.Context) error {}
