@@ -205,6 +205,7 @@ func (c *PackageController) HireCarrier(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest,
 			map[string]string{"error": "Invalid request body"})
 	}
+	
 	if err := c.validator.Struct(req); err != nil {
 		return ctx.JSON(http.StatusBadRequest,
 			map[string]string{"error": err.Error()})

@@ -89,7 +89,10 @@ func (s PackageUseCase) HireCarrier(id string, carrierID string) error {
 		return err
 	}
 
-	s.service.HireCarrier(pkg, carrierID)
+	err = s.service.HireCarrier(pkg, carrierID)
+	if err != nil {
+		return err
+	}
 
 	err = s.repository.Save(pkg)
 	if err != nil {
