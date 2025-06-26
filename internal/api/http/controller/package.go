@@ -21,6 +21,17 @@ func NewPackageController(usecase *usecase.PackageUseCase) *PackageController {
 	}
 }
 
+// Create godoc
+// @Summary Criar um novo pacote
+// @Description Cria um novo pacote com produto, peso e estado de destino. O sistema automaticamente mapeia o estado para a região correspondente e calcula as transportadoras disponíveis.
+// @Tags packages
+// @Accept json
+// @Produce json
+// @Param package body dto.PackageRequest true "Dados do pacote"
+// @Success 201 {object} map[string]string{message=string,id=string} "Pacote criado com sucesso"
+// @Failure 400 {object} map[string]string "Dados inválidos ou estado não suportado"
+// @Failure 500 {object} map[string]string "Erro interno do servidor"
+// @Router /package/ [post]
 func (c *PackageController) Create(ctx echo.Context) error {
 	req := &dto.PackageRequest{}
 	if err := ctx.Bind(&req); err != nil {
@@ -44,6 +55,17 @@ func (c *PackageController) Create(ctx echo.Context) error {
 	})
 }
 
+// Get godoc
+// @Summary Consultar um pacote específico
+// @Description Retorna os dados completos de um pacote pelo ID, incluindo informações de entrega se uma transportadora foi contratada.
+// @Tags packages
+// @Accept json
+// @Produce json
+// @Param id path string true "ID único do pacote"
+// @Success 200 {object} dto.PackageResponse "Dados do pacote"
+// @Failure 404 {object} map[string]string "Pacote não encontrado"
+// @Failure 500 {object} map[string]string "Erro interno do servidor"
+// @Router /package/{id} [get]
 func (c *PackageController) Get(ctx echo.Context) error {
 	id := ctx.Param("id")
 	pkg, err := c.us.Get(id)
@@ -73,6 +95,18 @@ func (c *PackageController) Get(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, res)
 }
 
+// UpdateStatus godoc
+// @Summary Atualizar status de um pacote
+// @Description Atualiza o status de um pacote específico. Status válidos: criado, esperando_coleta, coletado, enviado, entregue, extraviado.
+// @Tags packages
+// @Accept json
+// @Produce json
+// @Param request body dto.UpdateStatusRequest true "Dados para atualização de status"
+// @Success 200 {object} map[string]string{message=string} "Status atualizado com sucesso"
+// @Failure 400 {object} map[string]string "Dados inválidos ou status não permitido"
+// @Failure 404 {object} map[string]string "Pacote não encontrado"
+// @Failure 500 {object} map[string]string "Erro interno do servidor"
+// @Router /package/status [put]
 func (c *PackageController) UpdateStatus(ctx echo.Context) error {
 	req := &dto.UpdateStatusRequest{}
 	if err := ctx.Bind(req); err != nil {
@@ -95,6 +129,15 @@ func (c *PackageController) UpdateStatus(ctx echo.Context) error {
 	})
 }
 
+// GetAll godoc
+// @Summary Listar todos os pacotes
+// @Description Retorna todos os pacotes cadastrados no sistema. Endpoint temporário para desenvolvimento.
+// @Tags packages
+// @Accept json
+// @Produce json
+// @Success 200 {array} dto.PackageResponse "Lista de todos os pacotes"
+// @Failure 500 {object} map[string]string "Erro interno do servidor"
+// @Router /package [get]
 // TODO: Delete later
 func (c *PackageController) GetAll(ctx echo.Context) error {
 	pkgs, err := c.us.GetAll()
@@ -106,6 +149,17 @@ func (c *PackageController) GetAll(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, pkgs)
 }
 
+// QuoteShippings godoc
+// @Summary Cotação de fretes
+// @Description Retorna cotações de frete disponíveis para um pacote, ordenadas por prazo de entrega. Inclui preços e prazos estimados de todas as transportadoras que atendem a região do pacote.
+// @Tags packages
+// @Accept json
+// @Produce json
+// @Param id path string true "ID do pacote"
+// @Success 200 {object} dto.ShippingsQuoteResponse "Cotações de frete disponíveis"
+// @Failure 404 {object} map[string]string "Pacote não encontrado"
+// @Failure 500 {object} map[string]string "Erro interno do servidor"
+// @Router /package/{id}/quote [post]
 func (c *PackageController) QuoteShippings(ctx echo.Context) error {
 	req := &dto.ShippingsQuoteRequest{}
 	req.PackageID = ctx.Param("id")
@@ -132,6 +186,19 @@ func (c *PackageController) QuoteShippings(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, res)
 }
 
+// HireCarrier godoc
+// @Summary Contratar transportadora
+// @Description Contrata uma transportadora para realizar a entrega do pacote. O status do pacote será automaticamente alterado para 'esperando_coleta'. Transportadoras disponíveis: nebulix, rotafacil, moventra.
+// @Tags packages
+// @Accept json
+// @Produce json
+// @Param request body dto.HireCarrierRequest true "Dados para contratação"
+// @Success 200 {object} map[string]string{message=string} "Transportadora contratada com sucesso"
+// @Failure 400 {object} map[string]string "Dados inválidos ou transportadora não disponível"
+// @Failure 404 {object} map[string]string "Pacote não encontrado"
+// @Failure 409 {object} map[string]string "Pacote já possui transportadora contratada"
+// @Failure 500 {object} map[string]string "Erro interno do servidor"
+// @Router /package/hire-carrier [post]
 func (c *PackageController) HireCarrier(ctx echo.Context) error {
 	req := &dto.HireCarrierRequest{}
 	if err := ctx.Bind(req); err != nil {

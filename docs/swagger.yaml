@@ -1,0 +1,362 @@
+basePath: /
+definitions:
+  github_com_foliveiracamara_delivery-manager-api_internal_api_http_dto.HireCarrierRequest:
+    description: Dados necessários para contratar uma transportadora
+    properties:
+      carrier_id:
+        example: nebulix
+        type: string
+      package_id:
+        example: 123e4567-e89b-12d3-a456-426614174000
+        type: string
+    required:
+    - carrier_id
+    - package_id
+    type: object
+  github_com_foliveiracamara_delivery-manager-api_internal_api_http_dto.PackageRequest:
+    description: Dados necessários para criar um novo pacote
+    properties:
+      estado_destino:
+        example: PR
+        type: string
+      peso_kg:
+        example: 0.6
+        maximum: 1000
+        type: number
+      produto:
+        example: Camisa tamanho G
+        maxLength: 100
+        minLength: 2
+        type: string
+    required:
+    - estado_destino
+    - peso_kg
+    - produto
+    type: object
+  github_com_foliveiracamara_delivery-manager-api_internal_api_http_dto.PackageResponse:
+    description: Resposta com os dados de um pacote
+    properties:
+      entrega:
+        $ref: '#/definitions/github_com_foliveiracamara_delivery-manager-api_internal_api_http_dto.ShippingQuoteResponse'
+      estado_destino:
+        example: PR
+        type: string
+      id:
+        example: 123e4567-e89b-12d3-a456-426614174000
+        type: string
+      peso_kg:
+        example: 0.6
+        type: number
+      produto:
+        example: Camisa tamanho G
+        type: string
+      regiao_destino:
+        example: sul
+        type: string
+      status:
+        example: criado
+        type: string
+    type: object
+  github_com_foliveiracamara_delivery-manager-api_internal_api_http_dto.ShippingQuoteResponse:
+    description: Dados de uma cotação de frete
+    properties:
+      nome:
+        example: Nebulix Logística
+        type: string
+      prazo_estimado:
+        example: 4
+        type: integer
+      preco:
+        example: 42.5
+        type: number
+      transportadora_id:
+        example: nebulix
+        type: string
+    type: object
+  github_com_foliveiracamara_delivery-manager-api_internal_api_http_dto.ShippingsQuoteResponse:
+    description: Resposta com as cotações de frete disponíveis
+    properties:
+      transportadoras:
+        items:
+          $ref: '#/definitions/github_com_foliveiracamara_delivery-manager-api_internal_api_http_dto.ShippingQuoteResponse'
+        type: array
+    type: object
+  github_com_foliveiracamara_delivery-manager-api_internal_api_http_dto.UpdateStatusRequest:
+    description: Dados necessários para atualizar o status de um pacote
+    properties:
+      package_id:
+        example: 123e4567-e89b-12d3-a456-426614174000
+        type: string
+      status:
+        example: enviado
+        type: string
+    required:
+    - package_id
+    - status
+    type: object
+host: localhost:5000
+info:
+  contact: {}
+  description: API para gerenciamento de envios de pacotes por diferentes transportadoras
+  title: Delivery Manager API
+  version: "1.0"
+paths:
+  /health:
+    get:
+      consumes:
+      - application/json
+      description: Verifica se a API está funcionando corretamente
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Health check da API
+      tags:
+      - health
+  /package:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todos os pacotes cadastrados no sistema. Endpoint temporário
+        para desenvolvimento.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Lista de todos os pacotes
+          schema:
+            items:
+              $ref: '#/definitions/github_com_foliveiracamara_delivery-manager-api_internal_api_http_dto.PackageResponse'
+            type: array
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Listar todos os pacotes
+      tags:
+      - packages
+  /package/:
+    post:
+      consumes:
+      - application/json
+      description: Cria um novo pacote com produto, peso e estado de destino. O sistema
+        automaticamente mapeia o estado para a região correspondente e calcula as
+        transportadoras disponíveis.
+      parameters:
+      - description: Dados do pacote
+        in: body
+        name: package
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_foliveiracamara_delivery-manager-api_internal_api_http_dto.PackageRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Pacote criado com sucesso
+          schema:
+            additionalProperties:
+              allOf:
+              - type: string
+              - properties:
+                  id:
+                    type: string
+                  message:
+                    type: string
+                type: object
+            type: object
+        "400":
+          description: Dados inválidos ou estado não suportado
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Criar um novo pacote
+      tags:
+      - packages
+  /package/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retorna os dados completos de um pacote pelo ID, incluindo informações
+        de entrega se uma transportadora foi contratada.
+      parameters:
+      - description: ID único do pacote
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Dados do pacote
+          schema:
+            $ref: '#/definitions/github_com_foliveiracamara_delivery-manager-api_internal_api_http_dto.PackageResponse'
+        "404":
+          description: Pacote não encontrado
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Consultar um pacote específico
+      tags:
+      - packages
+  /package/{id}/quote:
+    post:
+      consumes:
+      - application/json
+      description: Retorna cotações de frete disponíveis para um pacote, ordenadas
+        por prazo de entrega. Inclui preços e prazos estimados de todas as transportadoras
+        que atendem a região do pacote.
+      parameters:
+      - description: ID do pacote
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Cotações de frete disponíveis
+          schema:
+            $ref: '#/definitions/github_com_foliveiracamara_delivery-manager-api_internal_api_http_dto.ShippingsQuoteResponse'
+        "404":
+          description: Pacote não encontrado
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Cotação de fretes
+      tags:
+      - packages
+  /package/hire-carrier:
+    post:
+      consumes:
+      - application/json
+      description: 'Contrata uma transportadora para realizar a entrega do pacote.
+        O status do pacote será automaticamente alterado para ''esperando_coleta''.
+        Transportadoras disponíveis: nebulix, rotafacil, moventra.'
+      parameters:
+      - description: Dados para contratação
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_foliveiracamara_delivery-manager-api_internal_api_http_dto.HireCarrierRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Transportadora contratada com sucesso
+          schema:
+            additionalProperties:
+              allOf:
+              - type: string
+              - properties:
+                  message:
+                    type: string
+                type: object
+            type: object
+        "400":
+          description: Dados inválidos ou transportadora não disponível
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Pacote não encontrado
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "409":
+          description: Pacote já possui transportadora contratada
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Contratar transportadora
+      tags:
+      - packages
+  /package/status:
+    put:
+      consumes:
+      - application/json
+      description: 'Atualiza o status de um pacote específico. Status válidos: criado,
+        esperando_coleta, coletado, enviado, entregue, extraviado.'
+      parameters:
+      - description: Dados para atualização de status
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_foliveiracamara_delivery-manager-api_internal_api_http_dto.UpdateStatusRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Status atualizado com sucesso
+          schema:
+            additionalProperties:
+              allOf:
+              - type: string
+              - properties:
+                  message:
+                    type: string
+                type: object
+            type: object
+        "400":
+          description: Dados inválidos ou status não permitido
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Pacote não encontrado
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Atualizar status de um pacote
+      tags:
+      - packages
+swagger: "2.0"
