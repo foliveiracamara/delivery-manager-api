@@ -2,9 +2,9 @@ package dto
 
 // Requests
 type PackageRequest struct {
-	Product           string  `json:"product"`
-	WeightKg          float64 `json:"weight_kg"`
-	DestinationRegion string  `json:"destination_region"`
+	Product       string  `json:"produto"`
+	WeightKg      float64 `json:"peso_kg"`
+	EstadoDestino string  `json:"estado_destino"`
 }
 
 type ShippingsQuoteRequest struct {
@@ -12,8 +12,13 @@ type ShippingsQuoteRequest struct {
 }
 
 type HireCarrierRequest struct {
-	PackageID  string `json:"package_id"`
-	CarrierID  string `json:"carrier_id"`
+	PackageID string `json:"package_id"`
+	CarrierID string `json:"carrier_id"`
+}
+
+type UpdateStatusRequest struct {
+	PackageID string `json:"package_id"`
+	Status    string `json:"status"`
 }
 
 // End Requests
@@ -21,22 +26,23 @@ type HireCarrierRequest struct {
 // Responses
 type PackageResponse struct {
 	ID                string                 `json:"id"`
-	Product           string                 `json:"product"`
-	WeightKg          float64                `json:"weight_kg"`
-	DestinationRegion string                 `json:"destination_region"`
+	Product           string                 `json:"produto"`
+	WeightKg          float64                `json:"peso_kg"`
+	EstadoDestino     string                 `json:"estado_destino"`
+	RegiaoDestino     string                 `json:"regiao_destino"`
 	Status            string                 `json:"status"`
-	Shipping          *ShippingQuoteResponse `json:"shipping,omitempty"`
+	Shipping          *ShippingQuoteResponse `json:"entrega,omitempty"`
 }
 
 type ShippingsQuoteResponse struct {
-	Shippings []ShippingQuoteResponse `json:"shippings"`
+	Shippings []ShippingQuoteResponse `json:"transportadoras"`
 }
 
 type ShippingQuoteResponse struct {
-	CarrierID     string  `json:"carrier_id"`
-	EstimatedDays int     `json:"estimated_days"`
-	Price         float64 `json:"price"`
-	CarrierName   string  `json:"carrier_name"`
+	CarrierID     string  `json:"transportadora_id"`
+	EstimatedDays int     `json:"prazo_estimado"`
+	Price         float64 `json:"preco"`
+	CarrierName   string  `json:"nome"`
 }
 
 // End Responses

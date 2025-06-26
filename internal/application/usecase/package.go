@@ -1,6 +1,8 @@
 package usecase
 
 import (
+	"fmt"
+
 	"github.com/foliveiracamara/delivery-manager-api/internal/api/http/dto"
 	"github.com/foliveiracamara/delivery-manager-api/internal/domain"
 	"github.com/foliveiracamara/delivery-manager-api/internal/domain/repository"
@@ -18,15 +20,26 @@ func NewPackage(repository repository.PackageRepository, service *service.Packag
 }
 
 func (s PackageUseCase) Create(dto dto.PackageRequest) (id string, err error) {
+	// Convert state to region
+	region, exists := domain.GetRegionFromState(dto.EstadoDestino)
+	if !exists {
+		return "", fmt.Errorf("invalid state: %s", dto.EstadoDestino)
+	}
+
 	pkg, err := s.service.Create(&domain.Package{
 		Product:           dto.Product,
 		WeightKg:          dto.WeightKg,
-		DestinationRegion: domain.DestinationRegion(dto.DestinationRegion),
+		DestinationRegion: region,
+		DestinationState:  dto.EstadoDestino,
 	})
 	if err != nil {
 		return "", err
 	}
-	s.repository.Save(pkg)
+
+	err = s.repository.Save(pkg)
+	if err != nil {
+		return "", err
+	}
 
 	return pkg.ID, nil
 }
@@ -45,6 +58,20 @@ func (s PackageUseCase) GetAll() ([]*domain.Package, error) {
 		return nil, err
 	}
 	return pkgs, nil
+}
+
+func (s PackageUseCase) UpdateStatus(id string, status string) error {
+	pkg, err := s.repository.GetByID(id)
+	if err != nil {
+		return err
+	}
+
+	err = s.service.UpdateStatus(pkg, domain.PackageStatus(status))
+	if err != nil {
+		return err
+	}
+
+	return s.repository.Save(pkg)
 }
 
 func (s PackageUseCase) QuoteShipping(id string) ([]vo.Shipping, error) {

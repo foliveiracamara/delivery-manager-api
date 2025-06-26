@@ -15,6 +15,7 @@ func NewPackageService() *PackageService {
 func (s PackageService) Create(pkg *domain.Package) (*domain.Package, error) {
 	pkg, err := domain.NewPackage(
 		pkg.Product,
+		pkg.DestinationState,
 		pkg.WeightKg,
 		pkg.DestinationRegion,
 	)
@@ -23,6 +24,10 @@ func (s PackageService) Create(pkg *domain.Package) (*domain.Package, error) {
 	}
 
 	return pkg, nil
+}
+
+func (s PackageService) UpdateStatus(pkg *domain.Package, status domain.PackageStatus) error {
+	return pkg.UpdateStatus(status)
 }
 
 func (s PackageService) QuoteAvailableShippings(pkg *domain.Package) ([]vo.Shipping, error) {

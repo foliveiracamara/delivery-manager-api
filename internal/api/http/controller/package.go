@@ -21,24 +21,22 @@ func NewPackageController(usecase *usecase.PackageUseCase) *PackageController {
 }
 
 func (c *PackageController) Create(ctx echo.Context) error {
-	dto := &dto.PackageRequest{}
-	if err := ctx.Bind(&dto); err != nil {
+	req := &dto.PackageRequest{}
+	if err := ctx.Bind(&req); err != nil {
 		return ctx.JSON(http.StatusBadRequest,
 			map[string]string{"error": err.Error()})
 	}
 
-	id, err := c.us.Create(*dto)
+	id, err := c.us.Create(*req)
 	if err != nil {
 		return ctx.JSON(http.StatusInternalServerError,
 			map[string]string{"error": err.Error()})
 	}
 
-	return ctx.JSON(http.StatusCreated,
-		map[string]any{
-			"message": "Package created successfully",
-			"id": id,
-		},
-	)
+	return ctx.JSON(http.StatusCreated, map[string]string{
+		"message": "Package created successfully",
+		"id":      id,
+	})
 }
 
 func (c *PackageController) Get(ctx echo.Context) error {
@@ -49,13 +47,42 @@ func (c *PackageController) Get(ctx echo.Context) error {
 			map[string]string{"error": err.Error()})
 	}
 
-	return ctx.JSON(http.StatusOK, map[string]any{
-		"id":                 pkg.ID,
-		"product":            pkg.Product,
-		"weight_kg":          pkg.WeightKg,
-		"destination_region": pkg.DestinationRegion,
-		"status":             pkg.Status,
-		"shipping":           pkg.Shipping,
+	res := dto.PackageResponse{
+		ID:                pkg.ID,
+		Product:           pkg.Product,
+		WeightKg:          pkg.WeightKg,
+		EstadoDestino:     pkg.DestinationState,
+		RegiaoDestino:     string(pkg.DestinationRegion),
+		Status:            string(pkg.Status),
+	}
+
+	if pkg.Shipping != nil {
+		res.Shipping = &dto.ShippingQuoteResponse{
+			CarrierID:     pkg.Shipping.CarrierID,
+			EstimatedDays: pkg.Shipping.EstimatedDays,
+			Price:         pkg.Shipping.EstimatedPrice,
+			CarrierName:   pkg.Shipping.CarrierName,
+		}
+	}
+
+	return ctx.JSON(http.StatusOK, res)
+}
+
+func (c *PackageController) UpdateStatus(ctx echo.Context) error {
+	req := &dto.UpdateStatusRequest{}
+	if err := ctx.Bind(req); err != nil {
+		return ctx.JSON(http.StatusBadRequest,
+			map[string]string{"error": "Invalid request body"})
+	}
+
+	err := c.us.UpdateStatus(req.PackageID, req.Status)
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError,
+			map[string]string{"error": err.Error()})
+	}
+
+	return ctx.JSON(http.StatusOK, map[string]string{
+		"message": "Status updated successfully",
 	})
 }
 
@@ -113,6 +140,3 @@ func (c *PackageController) HireCarrier(ctx echo.Context) error {
 		"message": "Carrier hired successfully",
 	})
 }
-
-
-// func (c *PackageController) UpdateStatus(ctx echo.Context) error {}

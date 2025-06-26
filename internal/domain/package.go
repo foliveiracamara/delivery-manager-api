@@ -14,13 +14,14 @@ type Package struct {
 	Product           string            `json:"produto"`
 	WeightKg          float64           `json:"peso_kg"`
 	DestinationRegion DestinationRegion `json:"regiao_destino"`
+	DestinationState  string            `json:"estado_destino"`
 	Status            PackageStatus     `json:"status"`
 	Shipping          *vo.Shipping      `json:"shipping"`
 	CreatedAt         time.Time         `json:"created_at"`
 	UpdatedAt         time.Time         `json:"updated_at"`
 }
 
-func NewPackage(product string, weightKg float64, destinationRegion DestinationRegion) (*Package, error) {
+func NewPackage(product, destinationState string, weightKg float64, destinationRegion DestinationRegion) (*Package, error) {
 	valid := isValidDestinationRegion(destinationRegion)
 	if !valid {
 		return nil, errors.New("invalid destination region")
@@ -32,6 +33,7 @@ func NewPackage(product string, weightKg float64, destinationRegion DestinationR
 		Product:           product,
 		WeightKg:          weightKg,
 		DestinationRegion: destinationRegion,
+		DestinationState:  destinationState,
 		Status:            StatusCreated,
 		CreatedAt:         now,
 		UpdatedAt:         now,

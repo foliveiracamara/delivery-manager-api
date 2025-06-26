@@ -11,7 +11,7 @@ import (
 
 func NewRoot() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "delivery-manager`",
+		Use:   "delivery-manager",
 		Short: "",
 		Long:  ``,
 		CompletionOptions: cobra.CompletionOptions{
