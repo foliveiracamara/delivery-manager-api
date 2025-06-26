@@ -5,24 +5,29 @@ import (
 
 	"github.com/foliveiracamara/delivery-manager-api/internal/api/http/dto"
 	"github.com/foliveiracamara/delivery-manager-api/internal/application/usecase"
+	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
-	// "github.com/go-playground/validator/v10"
 )
 
 type PackageController struct {
-	us *usecase.PackageUseCase
-	// validator *validator.Validate
+	us        *usecase.PackageUseCase
+	validator *validator.Validate
 }
 
 func NewPackageController(usecase *usecase.PackageUseCase) *PackageController {
 	return &PackageController{
-		us: usecase,
+		us:        usecase,
+		validator: validator.New(),
 	}
 }
 
 func (c *PackageController) Create(ctx echo.Context) error {
 	req := &dto.PackageRequest{}
 	if err := ctx.Bind(&req); err != nil {
+		return ctx.JSON(http.StatusBadRequest,
+			map[string]string{"error": err.Error()})
+	}
+	if err := c.validator.Struct(req); err != nil {
 		return ctx.JSON(http.StatusBadRequest,
 			map[string]string{"error": err.Error()})
 	}
@@ -48,12 +53,12 @@ func (c *PackageController) Get(ctx echo.Context) error {
 	}
 
 	res := dto.PackageResponse{
-		ID:                pkg.ID,
-		Product:           pkg.Product,
-		WeightKg:          pkg.WeightKg,
-		EstadoDestino:     pkg.DestinationState,
-		RegiaoDestino:     string(pkg.DestinationRegion),
-		Status:            string(pkg.Status),
+		ID:            pkg.ID,
+		Product:       pkg.Product,
+		WeightKg:      pkg.WeightKg,
+		EstadoDestino: pkg.DestinationState,
+		RegiaoDestino: string(pkg.DestinationRegion),
+		Status:        string(pkg.Status),
 	}
 
 	if pkg.Shipping != nil {
@@ -73,6 +78,10 @@ func (c *PackageController) UpdateStatus(ctx echo.Context) error {
 	if err := ctx.Bind(req); err != nil {
 		return ctx.JSON(http.StatusBadRequest,
 			map[string]string{"error": "Invalid request body"})
+	}
+	if err := c.validator.Struct(req); err != nil {
+		return ctx.JSON(http.StatusBadRequest,
+			map[string]string{"error": err.Error()})
 	}
 
 	err := c.us.UpdateStatus(req.PackageID, req.Status)
@@ -128,6 +137,10 @@ func (c *PackageController) HireCarrier(ctx echo.Context) error {
 	if err := ctx.Bind(req); err != nil {
 		return ctx.JSON(http.StatusBadRequest,
 			map[string]string{"error": "Invalid request body"})
+	}
+	if err := c.validator.Struct(req); err != nil {
+		return ctx.JSON(http.StatusBadRequest,
+			map[string]string{"error": err.Error()})
 	}
 
 	err := c.us.HireCarrier(req.PackageID, req.CarrierID)

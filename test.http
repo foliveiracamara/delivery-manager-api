@@ -82,7 +82,7 @@ Content-Type: application/json
 ###
 
 ### Quote Shipping
-POST {{baseUrl}}/package/34d1b1bd-2057-41ce-96dc-9330aaf30e67/quote
+POST {{baseUrl}}/package/557bf123-2656-4b2a-a655-370e90470190/quote
 Content-Type: application/json
 
 ### Get All Packages (when implemented)
