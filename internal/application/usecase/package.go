@@ -1,9 +1,8 @@
 package usecase
 
 import (
-	"fmt"
-
 	"github.com/foliveiracamara/delivery-manager-api/internal/api/http/dto"
+	apperr "github.com/foliveiracamara/delivery-manager-api/internal/shared/apperror"
 	"github.com/foliveiracamara/delivery-manager-api/internal/domain"
 	"github.com/foliveiracamara/delivery-manager-api/internal/domain/repository"
 	"github.com/foliveiracamara/delivery-manager-api/internal/domain/vo"
@@ -23,7 +22,7 @@ func (s PackageUseCase) Create(dto dto.PackageRequest) (id string, err error) {
 	// Convert state to region
 	region, exists := domain.GetRegionFromState(dto.EstadoDestino)
 	if !exists {
-		return "", fmt.Errorf("invalid state: %s", dto.EstadoDestino)
+		return "", apperr.NewBadRequestError("Invalid state: " + dto.EstadoDestino)
 	}
 
 	pkg, err := s.service.Create(&domain.Package{

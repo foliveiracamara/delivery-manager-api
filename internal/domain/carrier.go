@@ -1,6 +1,6 @@
 package domain
 
-import "errors"
+import apperr "github.com/foliveiracamara/delivery-manager-api/internal/shared/apperror"
 
 // CarrierRegion represents the coverage of a carrier in a region
 type CarrierRegion struct {
@@ -65,7 +65,7 @@ func GetCarrierByID(id string) (*Carrier, error) {
 		}
 	}
 
-	return nil, errors.New("carrier not found")
+	return nil, apperr.NewNotFoundError("Carrier not found")
 }
 
 // GetAvailableCarriers returns the available carriers in the system

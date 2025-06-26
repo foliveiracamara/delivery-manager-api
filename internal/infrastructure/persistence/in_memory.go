@@ -1,10 +1,9 @@
 package persistence
 
 import (
-	"errors"
-
 	"github.com/foliveiracamara/delivery-manager-api/internal/domain"
 	"github.com/foliveiracamara/delivery-manager-api/internal/domain/repository"
+	apperr "github.com/foliveiracamara/delivery-manager-api/internal/shared/apperror"
 )
 
 type InMemoryPackageRepository struct {
@@ -26,7 +25,7 @@ func (r *InMemoryPackageRepository) GetByID(id string) (*domain.Package, error) 
 	if pkg, ok := r.packages[id]; ok {
 		return pkg, nil
 	}
-	return nil, errors.New("package not found")
+	return nil, apperr.NewNotFoundError("Package not found")
 }
 
 func (r *InMemoryPackageRepository) GetAll() ([]*domain.Package, error) {

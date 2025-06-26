@@ -28,9 +28,7 @@ func NewPackageController(usecase *usecase.PackageUseCase) *PackageController {
 // @Accept json
 // @Produce json
 // @Param package body dto.PackageRequest true "Dados do pacote"
-// @Success 201 {object} map[string]string{message=string,id=string} "Pacote criado com sucesso"
-// @Failure 400 {object} map[string]string "Dados inválidos ou estado não suportado"
-// @Failure 500 {object} map[string]string "Erro interno do servidor"
+// @Success 201 {object} dto.CreatePackageResponse "Pacote criado com sucesso"
 // @Router /package/ [post]
 func (c *PackageController) Create(ctx echo.Context) error {
 	req := &dto.PackageRequest{}
@@ -45,8 +43,7 @@ func (c *PackageController) Create(ctx echo.Context) error {
 
 	id, err := c.us.Create(*req)
 	if err != nil {
-		return ctx.JSON(http.StatusInternalServerError,
-			map[string]string{"error": err.Error()})
+		return err
 	}
 
 	return ctx.JSON(http.StatusCreated, map[string]string{
@@ -63,15 +60,12 @@ func (c *PackageController) Create(ctx echo.Context) error {
 // @Produce json
 // @Param id path string true "ID único do pacote"
 // @Success 200 {object} dto.PackageResponse "Dados do pacote"
-// @Failure 404 {object} map[string]string "Pacote não encontrado"
-// @Failure 500 {object} map[string]string "Erro interno do servidor"
 // @Router /package/{id} [get]
 func (c *PackageController) Get(ctx echo.Context) error {
 	id := ctx.Param("id")
 	pkg, err := c.us.Get(id)
 	if err != nil {
-		return ctx.JSON(http.StatusInternalServerError,
-			map[string]string{"error": err.Error()})
+		return err
 	}
 
 	res := dto.PackageResponse{
@@ -102,10 +96,7 @@ func (c *PackageController) Get(ctx echo.Context) error {
 // @Accept json
 // @Produce json
 // @Param request body dto.UpdateStatusRequest true "Dados para atualização de status"
-// @Success 200 {object} map[string]string{message=string} "Status atualizado com sucesso"
-// @Failure 400 {object} map[string]string "Dados inválidos ou status não permitido"
-// @Failure 404 {object} map[string]string "Pacote não encontrado"
-// @Failure 500 {object} map[string]string "Erro interno do servidor"
+// @Success 200 {object} dto.SuccessResponse "Status atualizado com sucesso"
 // @Router /package/status [put]
 func (c *PackageController) UpdateStatus(ctx echo.Context) error {
 	req := &dto.UpdateStatusRequest{}
@@ -120,8 +111,7 @@ func (c *PackageController) UpdateStatus(ctx echo.Context) error {
 
 	err := c.us.UpdateStatus(req.PackageID, req.Status)
 	if err != nil {
-		return ctx.JSON(http.StatusInternalServerError,
-			map[string]string{"error": err.Error()})
+		return err
 	}
 
 	return ctx.JSON(http.StatusOK, map[string]string{
@@ -136,14 +126,12 @@ func (c *PackageController) UpdateStatus(ctx echo.Context) error {
 // @Accept json
 // @Produce json
 // @Success 200 {array} dto.PackageResponse "Lista de todos os pacotes"
-// @Failure 500 {object} map[string]string "Erro interno do servidor"
 // @Router /package [get]
 // TODO: Delete later
 func (c *PackageController) GetAll(ctx echo.Context) error {
 	pkgs, err := c.us.GetAll()
 	if err != nil {
-		return ctx.JSON(http.StatusInternalServerError,
-			map[string]string{"error": err.Error()})
+		return err
 	}
 
 	return ctx.JSON(http.StatusOK, pkgs)
@@ -157,8 +145,6 @@ func (c *PackageController) GetAll(ctx echo.Context) error {
 // @Produce json
 // @Param id path string true "ID do pacote"
 // @Success 200 {object} dto.ShippingsQuoteResponse "Cotações de frete disponíveis"
-// @Failure 404 {object} map[string]string "Pacote não encontrado"
-// @Failure 500 {object} map[string]string "Erro interno do servidor"
 // @Router /package/{id}/quote [post]
 func (c *PackageController) QuoteShippings(ctx echo.Context) error {
 	req := &dto.ShippingsQuoteRequest{}
@@ -166,8 +152,7 @@ func (c *PackageController) QuoteShippings(ctx echo.Context) error {
 
 	shippings, err := c.us.QuoteShipping(req.PackageID)
 	if err != nil {
-		return ctx.JSON(http.StatusInternalServerError,
-			map[string]string{"error": err.Error()})
+		return err
 	}
 
 	res := dto.ShippingsQuoteResponse{
@@ -193,11 +178,7 @@ func (c *PackageController) QuoteShippings(ctx echo.Context) error {
 // @Accept json
 // @Produce json
 // @Param request body dto.HireCarrierRequest true "Dados para contratação"
-// @Success 200 {object} map[string]string{message=string} "Transportadora contratada com sucesso"
-// @Failure 400 {object} map[string]string "Dados inválidos ou transportadora não disponível"
-// @Failure 404 {object} map[string]string "Pacote não encontrado"
-// @Failure 409 {object} map[string]string "Pacote já possui transportadora contratada"
-// @Failure 500 {object} map[string]string "Erro interno do servidor"
+// @Success 200 {object} dto.SuccessResponse "Transportadora contratada com sucesso"
 // @Router /package/hire-carrier [post]
 func (c *PackageController) HireCarrier(ctx echo.Context) error {
 	req := &dto.HireCarrierRequest{}
@@ -205,7 +186,7 @@ func (c *PackageController) HireCarrier(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest,
 			map[string]string{"error": "Invalid request body"})
 	}
-	
+
 	if err := c.validator.Struct(req); err != nil {
 		return ctx.JSON(http.StatusBadRequest,
 			map[string]string{"error": err.Error()})
@@ -213,8 +194,7 @@ func (c *PackageController) HireCarrier(ctx echo.Context) error {
 
 	err := c.us.HireCarrier(req.PackageID, req.CarrierID)
 	if err != nil {
-		return ctx.JSON(http.StatusInternalServerError,
-			map[string]string{"error": err.Error()})
+		return err
 	}
 
 	return ctx.JSON(http.StatusOK, map[string]string{

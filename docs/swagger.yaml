@@ -1,6 +1,22 @@
 basePath: /
 definitions:
-  github_com_foliveiracamara_delivery-manager-api_internal_api_http_dto.HireCarrierRequest:
+  dto.CreatePackageResponse:
+    properties:
+      id:
+        example: 123e4567-e89b-12d3-a456-426614174000
+        type: string
+      message:
+        example: Package created successfully
+        type: string
+    type: object
+  dto.HealthCheckResponse:
+    description: Resposta simples de status da API
+    properties:
+      message:
+        example: OK!
+        type: string
+    type: object
+  dto.HireCarrierRequest:
     description: Dados necessários para contratar uma transportadora
     properties:
       carrier_id:
@@ -13,7 +29,7 @@ definitions:
     - carrier_id
     - package_id
     type: object
-  github_com_foliveiracamara_delivery-manager-api_internal_api_http_dto.PackageRequest:
+  dto.PackageRequest:
     description: Dados necessários para criar um novo pacote
     properties:
       estado_destino:
@@ -33,11 +49,11 @@ definitions:
     - peso_kg
     - produto
     type: object
-  github_com_foliveiracamara_delivery-manager-api_internal_api_http_dto.PackageResponse:
+  dto.PackageResponse:
     description: Resposta com os dados de um pacote
     properties:
       entrega:
-        $ref: '#/definitions/github_com_foliveiracamara_delivery-manager-api_internal_api_http_dto.ShippingQuoteResponse'
+        $ref: '#/definitions/dto.ShippingQuoteResponse'
       estado_destino:
         example: PR
         type: string
@@ -57,7 +73,7 @@ definitions:
         example: criado
         type: string
     type: object
-  github_com_foliveiracamara_delivery-manager-api_internal_api_http_dto.ShippingQuoteResponse:
+  dto.ShippingQuoteResponse:
     description: Dados de uma cotação de frete
     properties:
       nome:
@@ -73,15 +89,21 @@ definitions:
         example: nebulix
         type: string
     type: object
-  github_com_foliveiracamara_delivery-manager-api_internal_api_http_dto.ShippingsQuoteResponse:
+  dto.ShippingsQuoteResponse:
     description: Resposta com as cotações de frete disponíveis
     properties:
       transportadoras:
         items:
-          $ref: '#/definitions/github_com_foliveiracamara_delivery-manager-api_internal_api_http_dto.ShippingQuoteResponse'
+          $ref: '#/definitions/dto.ShippingQuoteResponse'
         type: array
     type: object
-  github_com_foliveiracamara_delivery-manager-api_internal_api_http_dto.UpdateStatusRequest:
+  dto.SuccessResponse:
+    properties:
+      message:
+        example: Operation completed successfully
+        type: string
+    type: object
+  dto.UpdateStatusRequest:
     description: Dados necessários para atualizar o status de um pacote
     properties:
       package_id:
@@ -112,9 +134,7 @@ paths:
         "200":
           description: OK
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/dto.HealthCheckResponse'
       summary: Health check da API
       tags:
       - health
@@ -131,14 +151,8 @@ paths:
           description: Lista de todos os pacotes
           schema:
             items:
-              $ref: '#/definitions/github_com_foliveiracamara_delivery-manager-api_internal_api_http_dto.PackageResponse'
+              $ref: '#/definitions/dto.PackageResponse'
             type: array
-        "500":
-          description: Erro interno do servidor
-          schema:
-            additionalProperties:
-              type: string
-            type: object
       summary: Listar todos os pacotes
       tags:
       - packages
@@ -155,35 +169,14 @@ paths:
         name: package
         required: true
         schema:
-          $ref: '#/definitions/github_com_foliveiracamara_delivery-manager-api_internal_api_http_dto.PackageRequest'
+          $ref: '#/definitions/dto.PackageRequest'
       produces:
       - application/json
       responses:
         "201":
           description: Pacote criado com sucesso
           schema:
-            additionalProperties:
-              allOf:
-              - type: string
-              - properties:
-                  id:
-                    type: string
-                  message:
-                    type: string
-                type: object
-            type: object
-        "400":
-          description: Dados inválidos ou estado não suportado
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Erro interno do servidor
-          schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/dto.CreatePackageResponse'
       summary: Criar um novo pacote
       tags:
       - packages
@@ -205,19 +198,7 @@ paths:
         "200":
           description: Dados do pacote
           schema:
-            $ref: '#/definitions/github_com_foliveiracamara_delivery-manager-api_internal_api_http_dto.PackageResponse'
-        "404":
-          description: Pacote não encontrado
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Erro interno do servidor
-          schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/dto.PackageResponse'
       summary: Consultar um pacote específico
       tags:
       - packages
@@ -240,19 +221,7 @@ paths:
         "200":
           description: Cotações de frete disponíveis
           schema:
-            $ref: '#/definitions/github_com_foliveiracamara_delivery-manager-api_internal_api_http_dto.ShippingsQuoteResponse'
-        "404":
-          description: Pacote não encontrado
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Erro interno do servidor
-          schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/dto.ShippingsQuoteResponse'
       summary: Cotação de fretes
       tags:
       - packages
@@ -269,45 +238,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_foliveiracamara_delivery-manager-api_internal_api_http_dto.HireCarrierRequest'
+          $ref: '#/definitions/dto.HireCarrierRequest'
       produces:
       - application/json
       responses:
         "200":
           description: Transportadora contratada com sucesso
           schema:
-            additionalProperties:
-              allOf:
-              - type: string
-              - properties:
-                  message:
-                    type: string
-                type: object
-            type: object
-        "400":
-          description: Dados inválidos ou transportadora não disponível
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "404":
-          description: Pacote não encontrado
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "409":
-          description: Pacote já possui transportadora contratada
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Erro interno do servidor
-          schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/dto.SuccessResponse'
       summary: Contratar transportadora
       tags:
       - packages
@@ -323,39 +261,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_foliveiracamara_delivery-manager-api_internal_api_http_dto.UpdateStatusRequest'
+          $ref: '#/definitions/dto.UpdateStatusRequest'
       produces:
       - application/json
       responses:
         "200":
           description: Status atualizado com sucesso
           schema:
-            additionalProperties:
-              allOf:
-              - type: string
-              - properties:
-                  message:
-                    type: string
-                type: object
-            type: object
-        "400":
-          description: Dados inválidos ou status não permitido
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "404":
-          description: Pacote não encontrado
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Erro interno do servidor
-          schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/dto.SuccessResponse'
       summary: Atualizar status de um pacote
       tags:
       - packages

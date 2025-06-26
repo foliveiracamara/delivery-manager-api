@@ -1,10 +1,10 @@
 package domain
 
 import (
-	"errors"
 	"slices"
 	"time"
 
+	apperr "github.com/foliveiracamara/delivery-manager-api/internal/shared/apperror"
 	"github.com/foliveiracamara/delivery-manager-api/internal/domain/vo"
 	"github.com/google/uuid"
 )
@@ -24,7 +24,7 @@ type Package struct {
 func NewPackage(product, destinationState string, weightKg float64, destinationRegion DestinationRegion) (*Package, error) {
 	valid := isValidDestinationRegion(destinationRegion)
 	if !valid {
-		return nil, errors.New("invalid destination region")
+		return nil, apperr.NewBadRequestError("Invalid destination region")
 	}
 
 	now := time.Now()
@@ -45,7 +45,7 @@ func NewPackage(product, destinationState string, weightKg float64, destinationR
 // UpdateStatus updates the package status
 func (p *Package) UpdateStatus(status PackageStatus) error {
 	if !IsValidStatus(status) {
-		return errors.New("invalid status")
+		return apperr.NewBadRequestError("Invalid status")
 	}
 
 	p.Status = status
@@ -71,7 +71,7 @@ func (p *Package) QuoteAvailableShippings() ([]vo.Shipping, error) {
 	for _, carrier := range availableCarriers {
 		price, days, ok := carrier.CalculateShipping(p.DestinationRegion, p.WeightKg)
 		if !ok {
-			return nil, errors.New("failed to calculate shipping")
+			return nil, apperr.NewInternalServerError("Failed to calculate shipping")
 		}
 		shippings = append(shippings, vo.NewShippingQuote(
 			carrier.Name,
@@ -97,7 +97,7 @@ func (p *Package) HireCarrier(carrierID string) error {
 	// Se não tiver transportadora, criar uma nova
 
 	if p.Shipping != nil {
-		return errors.New("package already has a carrier")
+		return apperr.NewConflictError("Package already has a carrier")
 	}
 
 	carrier, err := GetCarrierByID(carrierID)
@@ -106,12 +106,12 @@ func (p *Package) HireCarrier(carrierID string) error {
 	}
 
 	if !carrier.IsAvailableForRegion(p.DestinationRegion) {
-		return errors.New("carrier does not serve the destination region")
+		return apperr.NewBadRequestError("Carrier does not serve the destination region")
 	}
 
 	price, days, ok := carrier.CalculateShipping(p.DestinationRegion, p.WeightKg)
 	if !ok {
-		return errors.New("failed to calculate shipping")
+		return apperr.NewInternalServerError("Failed to calculate shipping")
 	}
 
 	shipping := vo.NewShippingQuote(

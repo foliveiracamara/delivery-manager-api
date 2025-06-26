@@ -1,8 +1,7 @@
 package in_memory
 
 import (
-	"errors"
-
+	apperr "github.com/foliveiracamara/delivery-manager-api/internal/shared/apperror"
 	"github.com/foliveiracamara/delivery-manager-api/internal/domain"
 	"github.com/foliveiracamara/delivery-manager-api/internal/domain/repository"
 )
@@ -26,11 +25,11 @@ func (r *InMemoryPackageRepository) GetByID(id string) (*domain.Package, error) 
 	if pkg, ok := r.packages[id]; ok {
 		return pkg, nil
 	}
-	return nil, errors.New("package not found")
+	return nil, apperr.NewNotFoundError("Package not found")
 }
 
 func (r *InMemoryPackageRepository) GetAll() ([]*domain.Package, error) {
-	pkgs := make([]*domain.Package, len(r.packages))
+	pkgs := make([]*domain.Package, 0, len(r.packages))
 	for _, pkg := range r.packages {
 		pkgs = append(pkgs, pkg)
 	}
@@ -49,5 +48,5 @@ func GetPackage(id string) (*domain.Package, error) {
 	if pkg, ok := packages[id]; ok {
 		return pkg, nil
 	}
-	return nil, errors.New("package not found")
+	return nil, apperr.NewNotFoundError("Package not found")
 }

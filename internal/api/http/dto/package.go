@@ -64,3 +64,14 @@ type ShippingQuoteResponse struct {
 type HealthCheckResponse struct {
 	Message string `json:"message" example:"OK!"`
 }
+
+// SuccessResponse representa uma resposta de sucesso genérica
+type SuccessResponse struct {
+	Message string `json:"message" example:"Operation completed successfully"`
+}
+
+// CreatePackageResponse representa a resposta de criação de pacote
+type CreatePackageResponse struct {
+	Message string `json:"message" example:"Package created successfully"`
+	ID      string `json:"id" example:"123e4567-e89b-12d3-a456-426614174000"`
+}

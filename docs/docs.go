@@ -32,10 +32,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/dto.HealthCheckResponse"
                         }
                     }
                 }
@@ -60,16 +57,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/github_com_foliveiracamara_delivery-manager-api_internal_api_http_dto.PackageResponse"
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Erro interno do servidor",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
+                                "$ref": "#/definitions/dto.PackageResponse"
                             }
                         }
                     }
@@ -96,7 +84,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_foliveiracamara_delivery-manager-api_internal_api_http_dto.PackageRequest"
+                            "$ref": "#/definitions/dto.PackageRequest"
                         }
                     }
                 ],
@@ -104,43 +92,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Pacote criado com sucesso",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "allOf": [
-                                    {
-                                        "type": "string"
-                                    },
-                                    {
-                                        "type": "object",
-                                        "properties": {
-                                            "id": {
-                                                "type": "string"
-                                            },
-                                            "message": {
-                                                "type": "string"
-                                            }
-                                        }
-                                    }
-                                ]
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Dados inválidos ou estado não suportado",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Erro interno do servidor",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/dto.CreatePackageResponse"
                         }
                     }
                 }
@@ -166,7 +118,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_foliveiracamara_delivery-manager-api_internal_api_http_dto.HireCarrierRequest"
+                            "$ref": "#/definitions/dto.HireCarrierRequest"
                         }
                     }
                 ],
@@ -174,58 +126,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Transportadora contratada com sucesso",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "allOf": [
-                                    {
-                                        "type": "string"
-                                    },
-                                    {
-                                        "type": "object",
-                                        "properties": {
-                                            "message": {
-                                                "type": "string"
-                                            }
-                                        }
-                                    }
-                                ]
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Dados inválidos ou transportadora não disponível",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Pacote não encontrado",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "409": {
-                        "description": "Pacote já possui transportadora contratada",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Erro interno do servidor",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/dto.SuccessResponse"
                         }
                     }
                 }
@@ -251,7 +152,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_foliveiracamara_delivery-manager-api_internal_api_http_dto.UpdateStatusRequest"
+                            "$ref": "#/definitions/dto.UpdateStatusRequest"
                         }
                     }
                 ],
@@ -259,49 +160,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Status atualizado com sucesso",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "allOf": [
-                                    {
-                                        "type": "string"
-                                    },
-                                    {
-                                        "type": "object",
-                                        "properties": {
-                                            "message": {
-                                                "type": "string"
-                                            }
-                                        }
-                                    }
-                                ]
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Dados inválidos ou status não permitido",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Pacote não encontrado",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Erro interno do servidor",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/dto.SuccessResponse"
                         }
                     }
                 }
@@ -333,25 +192,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Dados do pacote",
                         "schema": {
-                            "$ref": "#/definitions/github_com_foliveiracamara_delivery-manager-api_internal_api_http_dto.PackageResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Pacote não encontrado",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Erro interno do servidor",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/dto.PackageResponse"
                         }
                     }
                 }
@@ -383,25 +224,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Cotações de frete disponíveis",
                         "schema": {
-                            "$ref": "#/definitions/github_com_foliveiracamara_delivery-manager-api_internal_api_http_dto.ShippingsQuoteResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Pacote não encontrado",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Erro interno do servidor",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/dto.ShippingsQuoteResponse"
                         }
                     }
                 }
@@ -409,7 +232,30 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "github_com_foliveiracamara_delivery-manager-api_internal_api_http_dto.HireCarrierRequest": {
+        "dto.CreatePackageResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "example": "123e4567-e89b-12d3-a456-426614174000"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Package created successfully"
+                }
+            }
+        },
+        "dto.HealthCheckResponse": {
+            "description": "Resposta simples de status da API",
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "example": "OK!"
+                }
+            }
+        },
+        "dto.HireCarrierRequest": {
             "description": "Dados necessários para contratar uma transportadora",
             "type": "object",
             "required": [
@@ -427,7 +273,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_foliveiracamara_delivery-manager-api_internal_api_http_dto.PackageRequest": {
+        "dto.PackageRequest": {
             "description": "Dados necessários para criar um novo pacote",
             "type": "object",
             "required": [
@@ -453,12 +299,12 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_foliveiracamara_delivery-manager-api_internal_api_http_dto.PackageResponse": {
+        "dto.PackageResponse": {
             "description": "Resposta com os dados de um pacote",
             "type": "object",
             "properties": {
                 "entrega": {
-                    "$ref": "#/definitions/github_com_foliveiracamara_delivery-manager-api_internal_api_http_dto.ShippingQuoteResponse"
+                    "$ref": "#/definitions/dto.ShippingQuoteResponse"
                 },
                 "estado_destino": {
                     "type": "string",
@@ -486,7 +332,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_foliveiracamara_delivery-manager-api_internal_api_http_dto.ShippingQuoteResponse": {
+        "dto.ShippingQuoteResponse": {
             "description": "Dados de uma cotação de frete",
             "type": "object",
             "properties": {
@@ -508,19 +354,28 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_foliveiracamara_delivery-manager-api_internal_api_http_dto.ShippingsQuoteResponse": {
+        "dto.ShippingsQuoteResponse": {
             "description": "Resposta com as cotações de frete disponíveis",
             "type": "object",
             "properties": {
                 "transportadoras": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_foliveiracamara_delivery-manager-api_internal_api_http_dto.ShippingQuoteResponse"
+                        "$ref": "#/definitions/dto.ShippingQuoteResponse"
                     }
                 }
             }
         },
-        "github_com_foliveiracamara_delivery-manager-api_internal_api_http_dto.UpdateStatusRequest": {
+        "dto.SuccessResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "example": "Operation completed successfully"
+                }
+            }
+        },
+        "dto.UpdateStatusRequest": {
             "description": "Dados necessários para atualizar o status de um pacote",
             "type": "object",
             "required": [
