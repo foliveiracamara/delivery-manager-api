@@ -3,6 +3,7 @@ package http
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/foliveiracamara/delivery-manager-api/internal/api"
 	"github.com/foliveiracamara/delivery-manager-api/internal/api/middlewares"
@@ -41,18 +42,17 @@ func (s *Server) Shutdown(ctx context.Context) error {
 }
 
 func (s *Server) setupMiddlewares() {
-	// s.e.Pre(middleware.AddTrailingSlash())
-	// s.e.Use(middleware.RequestID())
 	s.e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
 		Format: "method=${method}, uri=${uri}, status=${status}\n",
 	}))
-	// s.e.Use(middleware.Gzip())
-	// s.e.Use(middleware.BodyDump(func(c echo.Context, reqBody, resBody []byte) {
-	// 	fmt.Println("request", c.Response().Header().Get(echo.HeaderXRequestID), "path", c.Request().URL, "body", string(reqBody))
-	// 	fmt.Println("response", c.Response().Header().Get(echo.HeaderXRequestID), "status", c.Response().Status, "body", string(resBody))
-	// }))
 	s.e.Use(middleware.Recover())
 
-	// Configurar o handler de erros personalizado
+	// Middlewares de segurança
+	s.e.Use(middlewares.SecurityHeaders())
+	s.e.Use(middlewares.CORSMiddleware())
+	s.e.Use(middlewares.BodyLimitMiddleware())
+	s.e.Use(middlewares.TimeoutMiddleware())
+	s.e.Use(middlewares.RateLimitMiddleware(50, time.Minute))
+
 	s.e.HTTPErrorHandler = middlewares.ErrorHandler
 }
