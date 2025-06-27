@@ -42,19 +42,13 @@ type PackageResponse struct {
 	Shipping      *ShippingQuoteResponse `json:"entrega,omitempty"`
 }
 
-// ShippingsQuoteResponse represents the shipping quotes response
-// @Description Resposta com as cotações de frete disponíveis
-type ShippingsQuoteResponse struct {
-	Shippings []ShippingQuoteResponse `json:"transportadoras"`
-}
-
 // ShippingQuoteResponse represents a single shipping quote
 // @Description Dados de uma cotação de frete
 type ShippingQuoteResponse struct {
-	CarrierID     string  `json:"transportadora_id" example:"nebulix"`
-	EstimatedDays int     `json:"prazo_estimado" example:"4"`
-	Price         float64 `json:"preco" example:"42.50"`
-	CarrierName   string  `json:"nome" example:"Nebulix Logística"`
+	Transportadora    string  `json:"transportadora" example:"Nebulix Logística"`
+	PrecoEstimado     float64 `json:"preco_estimado" example:"42.50"`
+	PrazoEstimadoDias int     `json:"prazo_estimado_dias" example:"4"`
+	CarrierID         string  `json:"carrier_id" example:"nebulix"`
 }
 
 // End Responses

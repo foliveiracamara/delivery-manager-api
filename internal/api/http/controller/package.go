@@ -79,10 +79,10 @@ func (c *PackageController) Get(ctx echo.Context) error {
 
 	if pkg.Shipping != nil {
 		res.Shipping = &dto.ShippingQuoteResponse{
-			CarrierID:     pkg.Shipping.CarrierID,
-			EstimatedDays: pkg.Shipping.EstimatedDays,
-			Price:         pkg.Shipping.EstimatedPrice,
-			CarrierName:   pkg.Shipping.CarrierName,
+			Transportadora:    pkg.Shipping.CarrierName,
+			PrecoEstimado:     pkg.Shipping.EstimatedPrice,
+			PrazoEstimadoDias: pkg.Shipping.EstimatedDays,
+			CarrierID:         pkg.Shipping.CarrierID,
 		}
 	}
 
@@ -144,7 +144,7 @@ func (c *PackageController) GetAll(ctx echo.Context) error {
 // @Accept json
 // @Produce json
 // @Param id path string true "ID do pacote"
-// @Success 200 {object} dto.ShippingsQuoteResponse "Cotações de frete disponíveis"
+// @Success 200 {array} dto.ShippingQuoteResponse "Cotações de frete disponíveis"
 // @Router /package/{id}/quote [post]
 func (c *PackageController) QuoteShippings(ctx echo.Context) error {
 	req := &dto.ShippingsQuoteRequest{}
@@ -155,20 +155,17 @@ func (c *PackageController) QuoteShippings(ctx echo.Context) error {
 		return err
 	}
 
-	res := dto.ShippingsQuoteResponse{
-		Shippings: []dto.ShippingQuoteResponse{},
+	response := make([]dto.ShippingQuoteResponse, len(shippings))
+	for i, shipping := range shippings {
+		response[i] = dto.ShippingQuoteResponse{
+			Transportadora:    shipping.CarrierName,
+			PrecoEstimado:     shipping.EstimatedPrice,
+			PrazoEstimadoDias: shipping.EstimatedDays,
+			CarrierID:         shipping.CarrierID,
+		}
 	}
 
-	for _, shipping := range shippings {
-		res.Shippings = append(res.Shippings, dto.ShippingQuoteResponse{
-			CarrierID:     shipping.CarrierID,
-			EstimatedDays: shipping.EstimatedDays,
-			Price:         shipping.EstimatedPrice,
-			CarrierName:   shipping.CarrierName,
-		})
-	}
-
-	return ctx.JSON(http.StatusOK, res)
+	return ctx.JSON(http.StatusOK, response)
 }
 
 // HireCarrier godoc

@@ -4,8 +4,8 @@ import (
 	"slices"
 	"time"
 
-	apperr "github.com/foliveiracamara/delivery-manager-api/internal/shared/apperror"
 	"github.com/foliveiracamara/delivery-manager-api/internal/domain/vo"
+	apperr "github.com/foliveiracamara/delivery-manager-api/internal/shared/apperror"
 	"github.com/google/uuid"
 )
 

@@ -5,7 +5,7 @@ type Shipping struct {
 	CarrierName    string  `json:"transportadora"`
 	EstimatedPrice float64 `json:"preco_estimado"`
 	EstimatedDays  int     `json:"prazo_estimado_dias"`
-	CarrierID      string  `json:"transportadora_id"`
+	CarrierID      string  `json:"carrier_id"`
 }
 
 // ShippingRequest representa uma requisição de cotação (Value Object)
