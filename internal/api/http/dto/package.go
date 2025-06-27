@@ -48,7 +48,7 @@ type ShippingQuoteResponse struct {
 	Transportadora    string  `json:"transportadora" example:"Nebulix Logística"`
 	PrecoEstimado     float64 `json:"preco_estimado" example:"42.50"`
 	PrazoEstimadoDias int     `json:"prazo_estimado_dias" example:"4"`
-	CarrierID         string  `json:"carrier_id" example:"nebulix"`
+	TransportadoraID  string  `json:"transportadora_id" example:"nebulix"`
 }
 
 // End Responses

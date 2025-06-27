@@ -2,7 +2,6 @@ package persistence
 
 import (
 	"github.com/foliveiracamara/delivery-manager-api/internal/domain"
-	"github.com/foliveiracamara/delivery-manager-api/internal/domain/repository"
 	apperr "github.com/foliveiracamara/delivery-manager-api/internal/shared/apperror"
 )
 
@@ -10,7 +9,7 @@ type InMemoryPackageRepository struct {
 	packages map[string]*domain.Package
 }
 
-func NewInMemoryPackageRepository() repository.PackageRepository {
+func NewInMemoryPackageRepository() domain.PackageRepository {
 	return &InMemoryPackageRepository{
 		packages: make(map[string]*domain.Package),
 	}

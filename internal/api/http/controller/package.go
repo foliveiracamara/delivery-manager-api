@@ -82,7 +82,7 @@ func (c *PackageController) Get(ctx echo.Context) error {
 			Transportadora:    pkg.Shipping.CarrierName,
 			PrecoEstimado:     pkg.Shipping.EstimatedPrice,
 			PrazoEstimadoDias: pkg.Shipping.EstimatedDays,
-			CarrierID:         pkg.Shipping.CarrierID,
+			TransportadoraID:  pkg.Shipping.CarrierID,
 		}
 	}
 
@@ -161,7 +161,7 @@ func (c *PackageController) QuoteShippings(ctx echo.Context) error {
 			Transportadora:    shipping.CarrierName,
 			PrecoEstimado:     shipping.EstimatedPrice,
 			PrazoEstimadoDias: shipping.EstimatedDays,
-			CarrierID:         shipping.CarrierID,
+			TransportadoraID:  shipping.CarrierID,
 		}
 	}
 

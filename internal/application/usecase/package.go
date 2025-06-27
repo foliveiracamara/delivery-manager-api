@@ -2,20 +2,22 @@ package usecase
 
 import (
 	"github.com/foliveiracamara/delivery-manager-api/internal/api/http/dto"
-	apperr "github.com/foliveiracamara/delivery-manager-api/internal/shared/apperror"
 	"github.com/foliveiracamara/delivery-manager-api/internal/domain"
-	"github.com/foliveiracamara/delivery-manager-api/internal/domain/repository"
 	"github.com/foliveiracamara/delivery-manager-api/internal/domain/vo"
 	"github.com/foliveiracamara/delivery-manager-api/internal/service"
+	apperr "github.com/foliveiracamara/delivery-manager-api/internal/shared/apperror"
 )
 
 type PackageUseCase struct {
-	repository repository.PackageRepository
+	repository domain.PackageRepository
 	service    *service.PackageService
 }
 
-func NewPackage(repository repository.PackageRepository, service *service.PackageService) *PackageUseCase {
-	return &PackageUseCase{repository: repository, service: service}
+func NewPackage(repository domain.PackageRepository, service *service.PackageService) *PackageUseCase {
+	return &PackageUseCase{
+		repository: repository,
+		service:    service,
+	}
 }
 
 func (s PackageUseCase) Create(dto dto.PackageRequest) (id string, err error) {

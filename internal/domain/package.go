@@ -54,75 +54,11 @@ func (p *Package) UpdateStatus(status PackageStatus) error {
 	return nil
 }
 
-func (p *Package) QuoteAvailableShippings() ([]vo.Shipping, error) {
-	// Saber qual o destino do pacote
-	// Saber quais transportadoras atendem a região
-	// Criar lista de cotações de frete
-	// Retornar lista de cotações de frete, ordenadas por entrega mais rápida.
-
-	availableCarriers := []*Carrier{}
-	for _, carrier := range GetAvailableCarriers() {
-		if carrier.IsAvailableForRegion(p.DestinationRegion) {
-			availableCarriers = append(availableCarriers, carrier)
-		}
-	}
-
-	shippings := []vo.Shipping{}
-	for _, carrier := range availableCarriers {
-		price, days, ok := carrier.CalculateShipping(p.DestinationRegion, p.WeightKg)
-		if !ok {
-			return nil, apperr.NewInternalServerError("Failed to calculate shipping")
-		}
-		shippings = append(shippings, vo.NewShippingQuote(
-			carrier.Name,
-			carrier.ID,
-			price,
-			days,
-		))
-	}
-
-	return shippings, nil
-}
-
 func (p Package) SortShippingsByDeliveryTime(shippings []vo.Shipping) []vo.Shipping {
 	slices.SortFunc(shippings, func(a, b vo.Shipping) int {
 		return a.EstimatedDays - b.EstimatedDays
 	})
 	return shippings
-}
-
-func (p *Package) HireCarrier(carrierID string) error {
-	// Verificar se o pacote já tem transportadora
-	// verificar se a transportadora atende a regiao
-	// Se não tiver transportadora, criar uma nova
-
-	if p.Shipping != nil {
-		return apperr.NewConflictError("Package already has a carrier")
-	}
-
-	carrier, err := GetCarrierByID(carrierID)
-	if err != nil {
-		return err
-	}
-
-	if !carrier.IsAvailableForRegion(p.DestinationRegion) {
-		return apperr.NewBadRequestError("Carrier does not serve the destination region")
-	}
-
-	price, days, ok := carrier.CalculateShipping(p.DestinationRegion, p.WeightKg)
-	if !ok {
-		return apperr.NewInternalServerError("Failed to calculate shipping")
-	}
-
-	shipping := vo.NewShippingQuote(
-		carrier.Name,
-		carrier.ID,
-		price,
-		days,
-	)
-	p.AssignShipping(shipping)
-
-	return nil
 }
 
 // AssignShipping assigns a shipping to the package
