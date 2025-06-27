@@ -32,32 +32,6 @@
                 }
             }
         },
-        "/package": {
-            "get": {
-                "description": "Retorna todos os pacotes cadastrados no sistema. Endpoint temporário para desenvolvimento.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "packages"
-                ],
-                "summary": "Listar todos os pacotes",
-                "responses": {
-                    "200": {
-                        "description": "Lista de todos os pacotes",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/dto.PackageResponse"
-                            }
-                        }
-                    }
-                }
-            }
-        },
         "/package/": {
             "post": {
                 "description": "Cria um novo pacote com produto, peso e estado de destino. O sistema automaticamente mapeia o estado para a região correspondente e calcula as transportadoras disponíveis.",

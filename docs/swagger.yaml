@@ -130,24 +130,6 @@ paths:
       summary: Health check da API
       tags:
       - health
-  /package:
-    get:
-      consumes:
-      - application/json
-      description: Retorna todos os pacotes cadastrados no sistema. Endpoint temporário
-        para desenvolvimento.
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Lista de todos os pacotes
-          schema:
-            items:
-              $ref: '#/definitions/dto.PackageResponse'
-            type: array
-      summary: Listar todos os pacotes
-      tags:
-      - packages
   /package/:
     post:
       consumes:
