@@ -1,6 +1,6 @@
 package dto
 
-// PackageRequest represents the request to create a package
+// PackageRequest representa a requisição para criar um novo pacote
 // @Description Dados necessários para criar um novo pacote
 type PackageRequest struct {
 	Product       string  `json:"produto" validate:"required,min=2,max=100" example:"Camisa tamanho G"`
@@ -8,20 +8,20 @@ type PackageRequest struct {
 	EstadoDestino string  `json:"estado_destino" validate:"required,len=2,alpha" example:"PR"`
 }
 
-// ShippingsQuoteRequest represents the request to get shipping quotes
+// ShippingsQuoteRequest representa a requisição para obter cotações de frete
 // @Description Dados necessários para obter cotações de frete
 type ShippingsQuoteRequest struct {
 	PackageID string `json:"package_id" validate:"required" example:"123e4567-e89b-12d3-a456-426614174000"`
 }
 
-// HireCarrierRequest represents the request to hire a carrier
+// HireCarrierRequest representa a requisição para contratar uma transportadora
 // @Description Dados necessários para contratar uma transportadora
 type HireCarrierRequest struct {
 	PackageID string `json:"package_id" validate:"required" example:"123e4567-e89b-12d3-a456-426614174000"`
 	CarrierID string `json:"carrier_id" validate:"required" example:"nebulix"`
 }
 
-// UpdateStatusRequest represents the request to update package status
+// UpdateStatusRequest representa a requisição para atualizar o status de um pacote
 // @Description Dados necessários para atualizar o status de um pacote
 type UpdateStatusRequest struct {
 	PackageID string `json:"package_id" validate:"required" example:"123e4567-e89b-12d3-a456-426614174000"`
@@ -30,7 +30,7 @@ type UpdateStatusRequest struct {
 
 // End Requests
 
-// PackageResponse represents the package response
+// PackageResponse representa a resposta de um pacote
 // @Description Resposta com os dados de um pacote
 type PackageResponse struct {
 	ID            string                 `json:"id" example:"123e4567-e89b-12d3-a456-426614174000"`
@@ -42,7 +42,7 @@ type PackageResponse struct {
 	Shipping      *ShippingQuoteResponse `json:"entrega,omitempty"`
 }
 
-// ShippingQuoteResponse represents a single shipping quote
+// ShippingQuoteResponse representa uma cotação de frete
 // @Description Dados de uma cotação de frete
 type ShippingQuoteResponse struct {
 	Transportadora    string  `json:"transportadora" example:"Nebulix Logística"`
@@ -53,7 +53,7 @@ type ShippingQuoteResponse struct {
 
 // End Responses
 
-// HealthCheckResponse represents the health check response
+// HealthCheckResponse representa a resposta de saúde da API
 // @Description Resposta simples de status da API
 type HealthCheckResponse struct {
 	Message string `json:"message" example:"OK!"`
