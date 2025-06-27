@@ -108,19 +108,6 @@ Content-Type: application/json
 
 ###
 
-### Assign Carrier to Package (when implemented)
-# PUT {{baseUrl}}/package/{{packageId}}/carrier
-# Content-Type: application/json
-
-# {
-#   "carrier_id": "nebulix",
-#   "carrier_name": "Nebulix Logística",
-#   "estimated_price": 29.50,
-#   "estimated_days": 4
-# }
-
-###
-
 ### Hire Carrier
 POST {{baseUrl}}/package/hire-carrier
 Content-Type: application/json

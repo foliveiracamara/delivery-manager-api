@@ -76,26 +76,18 @@ definitions:
   dto.ShippingQuoteResponse:
     description: Dados de uma cotação de frete
     properties:
-      nome:
-        example: Nebulix Logística
-        type: string
-      prazo_estimado:
+      prazo_estimado_dias:
         example: 4
         type: integer
-      preco:
+      preco_estimado:
         example: 42.5
         type: number
+      transportadora:
+        example: Nebulix Logística
+        type: string
       transportadora_id:
         example: nebulix
         type: string
-    type: object
-  dto.ShippingsQuoteResponse:
-    description: Resposta com as cotações de frete disponíveis
-    properties:
-      transportadoras:
-        items:
-          $ref: '#/definitions/dto.ShippingQuoteResponse'
-        type: array
     type: object
   dto.SuccessResponse:
     properties:
@@ -221,7 +213,9 @@ paths:
         "200":
           description: Cotações de frete disponíveis
           schema:
-            $ref: '#/definitions/dto.ShippingsQuoteResponse'
+            items:
+              $ref: '#/definitions/dto.ShippingQuoteResponse'
+            type: array
       summary: Cotação de fretes
       tags:
       - packages

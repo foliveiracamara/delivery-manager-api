@@ -119,39 +119,92 @@ func TestNewPackage(t *testing.T) {
 }
 
 func TestPackage_UpdateStatus(t *testing.T) {
-	pkg, err := NewPackage("Test Product", "SP", 1.0, DestinationRegionSoutheast)
-	require.NoError(t, err)
-
 	tests := []struct {
 		name         string
 		status       PackageStatus
 		shouldError  bool
 		errorMessage string
+		setupPackage func(*Package)
 	}{
 		{
-			name:        "should update to waiting pickup",
+			name:        "should update to created (no carrier needed)",
+			status:      StatusCreated,
+			shouldError: false,
+		},
+		{
+			name:         "should fail to update to waiting pickup without carrier",
+			status:       StatusWaitingPickup,
+			shouldError:  true,
+			errorMessage: "Package cannot be marked as esperando_coleta without a carrier assigned",
+		},
+		{
+			name:        "should update to waiting pickup with carrier",
 			status:      StatusWaitingPickup,
 			shouldError: false,
+			setupPackage: func(p *Package) {
+				shipping := vo.NewShippingQuote("Test Carrier", "test-carrier", 25.50, 5)
+				p.Shipping = &shipping
+			},
 		},
 		{
-			name:        "should update to collected",
+			name:         "should fail to update to collected without carrier",
+			status:       StatusCollected,
+			shouldError:  true,
+			errorMessage: "Package cannot be marked as coletado without a carrier assigned",
+		},
+		{
+			name:        "should update to collected with carrier",
 			status:      StatusCollected,
 			shouldError: false,
+			setupPackage: func(p *Package) {
+				shipping := vo.NewShippingQuote("Test Carrier", "test-carrier", 25.50, 5)
+				p.Shipping = &shipping
+			},
 		},
 		{
-			name:        "should update to shipped",
+			name:         "should fail to update to shipped without carrier",
+			status:       StatusShipped,
+			shouldError:  true,
+			errorMessage: "Package cannot be marked as enviado without a carrier assigned",
+		},
+		{
+			name:        "should update to shipped with carrier",
 			status:      StatusShipped,
 			shouldError: false,
+			setupPackage: func(p *Package) {
+				shipping := vo.NewShippingQuote("Test Carrier", "test-carrier", 25.50, 5)
+				p.Shipping = &shipping
+			},
 		},
 		{
-			name:        "should update to delivered",
+			name:         "should fail to update to delivered without carrier",
+			status:       StatusDelivered,
+			shouldError:  true,
+			errorMessage: "Package cannot be marked as entregue without a carrier assigned",
+		},
+		{
+			name:        "should update to delivered with carrier",
 			status:      StatusDelivered,
 			shouldError: false,
+			setupPackage: func(p *Package) {
+				shipping := vo.NewShippingQuote("Test Carrier", "test-carrier", 25.50, 5)
+				p.Shipping = &shipping
+			},
 		},
 		{
-			name:        "should update to lost",
+			name:         "should fail to update to lost without carrier",
+			status:       StatusLost,
+			shouldError:  true,
+			errorMessage: "Package cannot be marked as extraviado without a carrier assigned",
+		},
+		{
+			name:        "should update to lost with carrier",
 			status:      StatusLost,
 			shouldError: false,
+			setupPackage: func(p *Package) {
+				shipping := vo.NewShippingQuote("Test Carrier", "test-carrier", 25.50, 5)
+				p.Shipping = &shipping
+			},
 		},
 		{
 			name:         "should fail with invalid status",
@@ -163,19 +216,28 @@ func TestPackage_UpdateStatus(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			originalUpdatedAt := pkg.UpdatedAt
+			// Create a fresh package for each test
+			testPkg, err := NewPackage("Test Product", "SP", 1.0, DestinationRegionSoutheast)
+			require.NoError(t, err)
+
+			// Setup package if needed
+			if tt.setupPackage != nil {
+				tt.setupPackage(testPkg)
+			}
+
+			originalUpdatedAt := testPkg.UpdatedAt
 			time.Sleep(1 * time.Millisecond) // Ensure time difference
 
-			err := pkg.UpdateStatus(tt.status)
+			err = testPkg.UpdateStatus(tt.status)
 
 			if tt.shouldError {
 				assert.Error(t, err)
 				assert.Contains(t, err.Error(), tt.errorMessage)
-				assert.NotEqual(t, tt.status, pkg.Status)
+				assert.NotEqual(t, tt.status, testPkg.Status)
 			} else {
 				assert.NoError(t, err)
-				assert.Equal(t, tt.status, pkg.Status)
-				assert.True(t, pkg.UpdatedAt.After(originalUpdatedAt))
+				assert.Equal(t, tt.status, testPkg.Status)
+				assert.True(t, testPkg.UpdatedAt.After(originalUpdatedAt))
 			}
 		})
 	}

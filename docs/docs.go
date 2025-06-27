@@ -224,7 +224,10 @@ const docTemplate = `{
                     "200": {
                         "description": "Cotações de frete disponíveis",
                         "schema": {
-                            "$ref": "#/definitions/dto.ShippingsQuoteResponse"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.ShippingQuoteResponse"
+                            }
                         }
                     }
                 }
@@ -336,33 +339,21 @@ const docTemplate = `{
             "description": "Dados de uma cotação de frete",
             "type": "object",
             "properties": {
-                "nome": {
-                    "type": "string",
-                    "example": "Nebulix Logística"
-                },
-                "prazo_estimado": {
+                "prazo_estimado_dias": {
                     "type": "integer",
                     "example": 4
                 },
-                "preco": {
+                "preco_estimado": {
                     "type": "number",
                     "example": 42.5
+                },
+                "transportadora": {
+                    "type": "string",
+                    "example": "Nebulix Logística"
                 },
                 "transportadora_id": {
                     "type": "string",
                     "example": "nebulix"
-                }
-            }
-        },
-        "dto.ShippingsQuoteResponse": {
-            "description": "Resposta com as cotações de frete disponíveis",
-            "type": "object",
-            "properties": {
-                "transportadoras": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/dto.ShippingQuoteResponse"
-                    }
                 }
             }
         },

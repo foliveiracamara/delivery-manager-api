@@ -1,17 +1,17 @@
 package vo
 
-// Shipping representa uma cotação de frete (Value Object)
+// Shipping representa uma cotação de frete
 type Shipping struct {
-	CarrierName    string  `json:"transportadora"`
-	EstimatedPrice float64 `json:"preco_estimado"`
-	EstimatedDays  int     `json:"prazo_estimado_dias"`
-	CarrierID      string  `json:"carrier_id"`
+	CarrierName    string
+	EstimatedPrice float64
+	EstimatedDays  int
+	CarrierID      string
 }
 
-// ShippingRequest representa uma requisição de cotação (Value Object)
+// ShippingRequest representa uma requisição de cotação
 type ShippingRequest struct {
-	WeightKg         float64 `json:"peso_kg"`
-	DestinationState string  `json:"estado_destino"`
+	WeightKg         float64
+	DestinationState string
 }
 
 // NewShippingQuote cria uma nova cotação de frete
@@ -36,9 +36,3 @@ func NewShippingRequest(weightKg float64, destinationState string) ShippingReque
 func (sr ShippingRequest) IsValid() bool {
 	return sr.WeightKg > 0 && sr.DestinationState != ""
 }
-
-// TODO: Checar se vai precisar mesmo
-// GetRegion retorna a região baseada no estado de destino
-// func (sr ShippingRequest) GetRegion() Region {
-// 	return GetRegionFromState(sr.DestinationState)
-// }

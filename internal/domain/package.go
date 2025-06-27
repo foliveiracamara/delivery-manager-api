@@ -42,10 +42,23 @@ func NewPackage(product, destinationState string, weightKg float64, destinationR
 	return &pkg, nil
 }
 
-// UpdateStatus updates the package status
+// UpdateStatus atualiza o status do pacote
 func (p *Package) UpdateStatus(status PackageStatus) error {
 	if !IsValidStatus(status) {
 		return apperr.NewBadRequestError("Invalid status")
+	}
+
+	// Validação: status que requerem transportadora atrelada
+	statusesRequiringCarrier := []PackageStatus{
+		StatusWaitingPickup,
+		StatusCollected,
+		StatusShipped,
+		StatusDelivered,
+		StatusLost,          
+	}
+
+	if slices.Contains(statusesRequiringCarrier, status) && p.Shipping == nil {
+		return apperr.NewBadRequestError("Package cannot be marked as '" + string(status) + "' without a carrier assigned")
 	}
 
 	p.Status = status
@@ -61,14 +74,14 @@ func (p Package) SortShippingsByDeliveryTime(shippings []vo.Shipping) []vo.Shipp
 	return shippings
 }
 
-// AssignShipping assigns a shipping to the package
+// AssignShipping atribui um frete ao pacote
 func (p *Package) AssignShipping(shipping vo.Shipping) {
 	p.Shipping = &shipping
 	p.Status = StatusWaitingPickup
 	p.UpdatedAt = time.Now()
 }
 
-// IsValidStatus checks if the status is valid
+// IsValidStatus verifica se o status é válido
 func IsValidStatus(status PackageStatus) bool {
 	validStatuses := []PackageStatus{
 		StatusCreated,
@@ -82,6 +95,7 @@ func IsValidStatus(status PackageStatus) bool {
 	return slices.Contains(validStatuses, status)
 }
 
+// isValidDestinationRegion verifica se a região de destino é válida
 func isValidDestinationRegion(destinationRegion DestinationRegion) bool {
 	validRegions := []DestinationRegion{
 		DestinationRegionMidwest,
