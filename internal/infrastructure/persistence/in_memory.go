@@ -26,11 +26,3 @@ func (r *InMemoryPackageRepository) GetByID(id string) (*domain.Package, error) 
 	}
 	return nil, apperr.NewNotFoundError("Package not found")
 }
-
-func (r *InMemoryPackageRepository) GetAll() ([]*domain.Package, error) {
-	pkgs := make([]*domain.Package, 0, len(r.packages))
-	for _, pkg := range r.packages {
-		pkgs = append(pkgs, pkg)
-	}
-	return pkgs, nil
-}

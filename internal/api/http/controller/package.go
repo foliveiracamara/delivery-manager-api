@@ -119,24 +119,6 @@ func (c *PackageController) UpdateStatus(ctx echo.Context) error {
 	})
 }
 
-// GetAll godoc
-// @Summary Listar todos os pacotes
-// @Description Retorna todos os pacotes cadastrados no sistema. Endpoint temporário para desenvolvimento.
-// @Tags packages
-// @Accept json
-// @Produce json
-// @Success 200 {array} dto.PackageResponse "Lista de todos os pacotes"
-// @Router /package [get]
-// TODO: Delete later
-func (c *PackageController) GetAll(ctx echo.Context) error {
-	pkgs, err := c.us.GetAll()
-	if err != nil {
-		return err
-	}
-
-	return ctx.JSON(http.StatusOK, pkgs)
-}
-
 // QuoteShippings godoc
 // @Summary Cotação de fretes
 // @Description Retorna cotações de frete disponíveis para um pacote, ordenadas por prazo de entrega. Inclui preços e prazos estimados de todas as transportadoras que atendem a região do pacote.

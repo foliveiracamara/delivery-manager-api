@@ -27,9 +27,13 @@ O projeto segue os princípios da **Clean Architecture** com as seguintes camada
 └── test.http            # Exemplos de requisições
 ```
 
-## 📋 Pré-requisitos
+## 🛠️ Tecnologias Utilizadas
 
-- **Go 1.21+** ([Download](https://golang.org/dl/))
+- **Go 1.23**: Linguagem principal
+- **Uber Fx**: Framework de injeção de dependência e lifecycle management
+- **Echo**: Framework web para roteamento HTTP
+- **Swag**: Geração automática de documentação Swagger
+- **Testify**: Framework de testes
 
 ## 🛠️ Instalação
 

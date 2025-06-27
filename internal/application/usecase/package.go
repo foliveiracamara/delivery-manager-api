@@ -53,14 +53,6 @@ func (s PackageUseCase) Get(id string) (*domain.Package, error) {
 	return pkg, nil
 }
 
-func (s PackageUseCase) GetAll() ([]*domain.Package, error) {
-	pkgs, err := s.repository.GetAll()
-	if err != nil {
-		return nil, err
-	}
-	return pkgs, nil
-}
-
 func (s PackageUseCase) UpdateStatus(id string, status string) error {
 	pkg, err := s.repository.GetByID(id)
 	if err != nil {

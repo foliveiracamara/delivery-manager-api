@@ -26,7 +26,6 @@ func (s *Server) setupRoutes(cm *ControllerManager) {
 
 	packageRouter := mainRouter.Group("/package")
 	packageRouter.GET("/:id", cm.PackageController.Get)
-	packageRouter.GET("/", cm.PackageController.GetAll) //TODO: Delete later
 	packageRouter.POST("/", cm.PackageController.Create)
 	packageRouter.POST("/:id/quote", cm.PackageController.QuoteShippings)
 	packageRouter.POST("/hire-carrier", cm.PackageController.HireCarrier)
